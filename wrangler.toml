@@ -1,0 +1,17 @@
+name = "surface-scan"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+
+# Frontend dosyaları public/ klasöründen sunulur. Tüm istekler önce Worker'a gelir;
+# /api/* işlenir, geri kalanı env.ASSETS.fetch ile statik dosyalara iletilir.
+[assets]
+directory = "./public"
+binding = "ASSETS"
+run_worker_first = true
+
+# Rate limit için (wrangler 3.90+ ile desteklenir). Limit: 60 sn'de 5 tarama / IP
+[[unsafe.bindings]]
+name = "RATE_LIMITER"
+type = "ratelimit"
+namespace_id = "1001"
+simple = { limit = 5, period = 60 }

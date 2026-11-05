@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Surface Scan – Pasif Web Güvenlik Kontrolü</title>
+  <meta name="description" content="Alan adının saldırı yüzeyini pasif olarak tara: güvenlik başlıkları, TLS, DNS, security.txt ve alt alan adları. Ücretsiz, hesap gerekmez." />
+  <meta name="theme-color" content="#050912" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="stylesheet" href="/style.css" />
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <canvas id="bg" aria-hidden="true"></canvas>
+  <div class="grid-bg" aria-hidden="true"></div>
+  <div class="glow g1" aria-hidden="true"></div>
+  <div class="glow g2" aria-hidden="true"></div>
+  <div class="glow g3" aria-hidden="true"></div>
+
+  <header class="nav">
+    <div class="nav-in">
+      <a class="logo" href="/" aria-label="Surface Scan ana sayfa">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#60a5fa"/><stop offset="1" stop-color="#22d3ee"/></linearGradient><clipPath id="lc"><path d="M16 4l12 6-12 6-12-6z"/></clipPath></defs><path d="M4 21l12 6 12-6" fill="none" stroke="#3b82f6" stroke-opacity=".5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16l12 6 12-6" fill="none" stroke="#60a5fa" stroke-opacity=".75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 4l12 6-12 6-12-6z" fill="url(#lg)" fill-opacity=".35" stroke="url(#lg)" stroke-width="2" stroke-linejoin="round"/><g clip-path="url(#lc)"><path class="beam" d="M2 10h28" stroke="#e8fbff" stroke-width="1.7" stroke-linecap="round"/></g></svg>
+        <span>Surface<b>Scan</b></span>
+      </a>
+      <nav class="nav-links" aria-label="Ana menü">
+        <a href="#features">Saldırı yüzeyi</a>
+        <a href="#how">Nasıl çalışır</a>
+        <a href="#faq">SSS</a>
+        <a class="pill" href="#top-scan" id="nav-scan">Hemen tara</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="top-scan">
+      <div class="hero-text">
+        <span class="eyebrow"><i></i> Ücretsiz · Hesap gerekmez · Pasif tarama</span>
+        <h1>Sitenin güvenliği ne durumda?<br /><span class="grad">Saniyeler içinde öğren.</span></h1>
+        <p class="lead">Alan adını gir; güvenlik başlıkları, TLS, DNS, cookie ve alt alan adları saldırı denemesi yapmadan kontrol edilsin. Sonunda skor ve düzeltme önerileri al.</p>
+
+        <form id="form" autocomplete="off">
+          <div class="scan-box">
+            <div class="scan-inner">
+              <input id="domain" name="domain" type="text" inputmode="url" placeholder="ornek.com" autocapitalize="off" spellcheck="false" aria-label="Alan adı" required />
+              <button id="btn" class="btn-primary" type="submit"><span data-icon="search"></span><span>Tara</span></button>
+            </div>
+          </div>
+          <p class="fine">Yalnızca sahibi olduğunuz ya da tarama izni aldığınız alan adlarını kontrol edin.</p>
+        </form>
+
+        <div class="trust">
+          <span><span data-icon="check"></span> Port taraması yok</span>
+          <span><span data-icon="check"></span> Saldırı denemesi yok</span>
+          <span><span data-icon="check"></span> Sonuçlar kaydedilmez</span>
+        </div>
+      </div>
+
+      <div class="hero-visual" id="hero-visual" aria-hidden="true">
+        <div class="mock" id="mock">
+          <div class="mock-bar"><i></i><i></i><i></i><span>surface scan · rapor</span><em>örnek görünüm</em></div>
+          <div class="mock-body">
+            <div class="mock-top">
+              <div class="mock-ring">
+                <svg class="ring-svg" viewBox="0 0 120 120"><circle class="ring-bg" cx="60" cy="60" r="52"/><circle class="ring-fg m82" cx="60" cy="60" r="52"/></svg>
+                <b data-count="82">0</b>
+              </div>
+              <div class="mock-stats">
+                <div class="h"><b data-count="0">0</b><span>Yüksek</span></div>
+                <div class="m"><b data-count="2">0</b><span>Orta</span></div>
+                <div class="l"><b data-count="4">0</b><span>Düşük</span></div>
+              </div>
+            </div>
+            <ul class="mock-list">
+              <li><span class="dot pass"></span>strict-transport-security<em class="tag-pass">geçti</em></li>
+              <li><span class="dot medium"></span>content-security-policy<em class="tag-medium">eksik</em></li>
+              <li><span class="dot pass"></span>SPF · DMARC kayıtları<em class="tag-pass">geçti</em></li>
+              <li><span class="dot info"></span>7 alt alan adı bulundu<em class="tag-info">bilgi</em></li>
+            </ul>
+            <div class="radar"></div>
+          </div>
+          <span class="float f1"><span data-icon="check"></span> HTTPS aktif</span>
+          <span class="float f2"><span data-icon="alert"></span> CSP eksik</span>
+          <span class="float f3"><span data-icon="globe"></span> DNS kontrol edildi</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="scan" aria-live="polite">
+      <div id="progress" class="progress glass" hidden>
+        <div class="prog-head"><span data-icon="radar"></span><h3 id="prog-title">Taranıyor…</h3></div>
+        <div class="bar"><i id="bar"></i></div>
+        <ul id="steps" class="steps"></ul>
+        <p id="prog-msg" hidden></p>
+      </div>
+      <div id="result"></div>
+    </section>
+
+    <section class="stats reveal" aria-label="Özet">
+      <div class="stat glass"><b data-count="7">0</b><span>kontrol kategorisi</span></div>
+      <div class="stat glass"><b data-count="15" data-suffix="+">0</b><span>tekil güvenlik kontrolü</span></div>
+      <div class="stat glass"><b data-count="0">0</b><span>saldırı denemesi</span></div>
+      <div class="stat glass"><b data-count="100" data-suffix="%">0</b><span>pasif ve salt okunur</span></div>
+    </section>
+
+    <section class="section" id="features">
+      <div class="sec-head reveal">
+        <span class="kicker">Saldırı yüzeyi</span>
+        <h2>Bir saldırganın ilk bakacağı yerler</h2>
+        <p>Alan adının etrafındaki altı noktaya dokun; her birinde ne aradığımızı ve saldırganın neden baktığını gör.</p>
+      </div>
+      <div class="surface">
+        <div class="map reveal" id="map">
+          <svg class="map-lines" viewBox="0 0 400 400" aria-hidden="true">
+            <circle class="orbit o1" cx="200" cy="200" r="95"/>
+            <circle class="orbit o2" cx="200" cy="200" r="160"/>
+            <circle class="orbit o3" cx="200" cy="200" r="198"/>
+            <line class="spoke" data-k="headers" x1="200" y1="200" x2="200" y2="40"/>
+            <line class="spoke" data-k="tls" x1="200" y1="200" x2="338.6" y2="120"/>
+            <line class="spoke" data-k="dns" x1="200" y1="200" x2="338.6" y2="280"/>
+            <line class="spoke" data-k="subs" x1="200" y1="200" x2="200" y2="360"/>
+            <line class="spoke" data-k="files" x1="200" y1="200" x2="61.4" y2="280"/>
+            <line class="spoke" data-k="tech" x1="200" y1="200" x2="61.4" y2="120"/>
+          </svg>
+          <div class="core"><span data-icon="globe"></span><b>ornek.com</b></div>
+          <button class="node n1" data-k="headers" type="button" aria-label="Güvenlik başlıkları"><span data-icon="shield"></span><em>Başlıklar</em></button>
+          <button class="node n2" data-k="tls" type="button" aria-label="TLS ve HTTPS"><span data-icon="lock"></span><em>TLS / HTTPS</em></button>
+          <button class="node n3" data-k="dns" type="button" aria-label="DNS ve e-posta"><span data-icon="mail"></span><em>DNS ve e-posta</em></button>
+          <button class="node n4" data-k="subs" type="button" aria-label="Alt alan adları"><span data-icon="network"></span><em>Alt alanlar</em></button>
+          <button class="node n5" data-k="files" type="button" aria-label="Standart dosyalar"><span data-icon="file"></span><em>Dosyalar</em></button>
+          <button class="node n6" data-k="tech" type="button" aria-label="Teknoloji izleri"><span data-icon="cpu"></span><em>Teknoloji</em></button>
+        </div>
+
+        <aside class="detail glass reveal" id="detail" aria-live="polite">
+          <div class="d-head">
+            <div class="d-ico" id="d-ico"></div>
+            <div><small class="d-kick">Saldırı yüzeyi</small><h3 id="d-title">Güvenlik başlıkları</h3></div>
+          </div>
+          <p id="d-desc">Tarayıcının sayfayı nasıl işleyeceğini belirleyen HTTP başlıkları.</p>
+          <div class="d-att"><b>Saldırgan açısından</b><p id="d-att">Eksik başlıklar clickjacking ve XSS gibi saldırıların işini kolaylaştırır.</p></div>
+          <div class="d-sub">Biz neyi kontrol ediyoruz</div>
+          <ul class="d-tags" id="d-tags"></ul>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="how">
+      <div class="sec-head reveal">
+        <span class="kicker">Nasıl çalışır</span>
+        <h2>Üç adımda rapor</h2>
+        <p>Kurulum yok, hesap yok. Alan adını yaz, raporu al.</p>
+      </div>
+      <div class="flow">
+        <div class="step glass reveal">
+          <span class="badge-n">1</span>
+          <div class="mini m1" aria-hidden="true">
+            <div class="mi-input"><span class="mi-type">ornek.com</span><i class="mi-caret"></i></div>
+            <div class="mi-btn">Tara</div>
+          </div>
+          <h3>Alan adını gir</h3>
+          <p>Sadece alan adı yeterli. Ana sayfa adresi ya da https:// yazman gerekmez.</p>
+        </div>
+        <div class="step glass reveal">
+          <span class="badge-n">2</span>
+          <div class="mini m2" aria-hidden="true">
+            <div class="mi-row r1"><span>HTTPS</span><div class="mi-bar"><i></i></div></div>
+            <div class="mi-row r2"><span>Başlıklar</span><div class="mi-bar"><i></i></div></div>
+            <div class="mi-row r3"><span>DNS</span><div class="mi-bar"><i></i></div></div>
+            <div class="mi-row r4"><span>Alt alanlar</span><div class="mi-bar"><i></i></div></div>
+          </div>
+          <h3>Pasif kontroller çalışır</h3>
+          <p>Birkaç sıradan HTTP ve DNS isteğiyle herkese açık bilgiler okunur.</p>
+        </div>
+        <div class="step glass reveal">
+          <span class="badge-n">3</span>
+          <div class="mini m3" aria-hidden="true">
+            <div class="mi-ring"><svg class="ring-svg" viewBox="0 0 120 120"><circle class="ring-bg" cx="60" cy="60" r="52"/><circle class="ring-fg loop" cx="60" cy="60" r="52"/></svg><b>82</b></div>
+            <div class="mi-list"><span class="tag-pass">3 geçti</span><span class="tag-medium">2 orta</span><span class="tag-low">4 düşük</span><div class="mi-note">Önce CSP ekle</div></div>
+          </div>
+          <h3>Skor ve öneriler</h3>
+          <p>Bulgular önem sırasına dizilir, her biri için çözüm önerisi gösterilir.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="faq">
+      <div class="sec-head reveal">
+        <span class="kicker">SSS</span>
+        <h2>Sık sorulanlar</h2>
+      </div>
+      <div class="faq">
+        <details class="glass"><summary>Tarama sitemi yavaşlatır ya da bozar mı?</summary><p>Hayır. Ana sayfa, security.txt ve robots.txt için birkaç normal HTTP isteği atılır. Sitene yük bindirecek bir işlem yapılmaz.</p></details>
+        <details class="glass"><summary>Port taraması ya da zafiyet sömürme yapıyor mu?</summary><p>Hayır. Yalnızca herkese açık bilgiler okunur: HTTP başlıkları, DNS kayıtları ve sertifika şeffaflık kayıtları.</p></details>
+        <details class="glass"><summary>Skor nasıl hesaplanıyor?</summary><p>100 puandan başlanır. Yüksek riskli her bulgu 25, orta riskli 10, düşük riskli 4 puan düşürür. Bilgi ve geçen kontroller puanı etkilemez.</p></details>
+        <details class="glass"><summary>Neden skorum 100 değil?</summary><p>Genelde eksik güvenlik başlıkları ve security.txt yüzünden. Sonuç ekranındaki "Önce bunları düzelt" kutusundan başlayabilirsin.</p></details>
+        <details class="glass"><summary>Neden bazı bulgular yalnızca "bilgi" seviyesinde?</summary><p>robots.txt'in olmaması ya da kullanılan teknolojilerin görünmesi tek başına açık değildir. Farkındalık için gösterilir, skoru düşürmez.</p></details>
+        <details class="glass"><summary>Başkasının sitesini tarayabilir miyim?</summary><p>Yalnızca sahibi olduğun ya da yazılı izin aldığın alan adlarını tara. İzinsiz tarama bazı ülkelerde hukuki sorun doğurabilir.</p></details>
+        <details class="glass"><summary>Sonuçlarım kaydediliyor mu?</summary><p>Uygulama sonuçları bir veritabanına kaydetmez. Rapor tarama sırasında üretilir ve tarayıcına gönderilir.</p></details>
+        <details class="glass"><summary>Alt alan adlarını nasıl buluyor?</summary><p>Herkese açık sertifika şeffaflık kayıtlarından (crt.sh). Yalnızca sertifika almış alt alan adları görünür, eksik kalabilir.</p></details>
+        <details class="glass"><summary>security.txt nedir, neden isteniyor?</summary><p>Güvenlik araştırmacılarının bir açığı sana nasıl bildireceğini söyleyen küçük bir iletişim dosyasıdır (RFC 9116).</p></details>
+        <details class="glass"><summary>Dakikada kaç tarama yapabilirim?</summary><p>Kötüye kullanımı önlemek için IP başına dakikada 5 tarama sınırı var. Aşarsan bir dakika bekleyip tekrar dene.</p></details>
+        <details class="glass"><summary>Sonuçlar eksik ya da hatalı çıkabilir mi?</summary><p>Bazı siteler otomatik istekleri engeller (WAF, bot koruması). Bu durumda başlıklar ya da dosyalar görünmeyebilir.</p></details>
+        <details class="glass"><summary>Bu tarama tam bir güvenlik testinin yerini tutar mı?</summary><p>Hayır. Pasif tarama yüzeydeki yaygın eksikleri yakalar. Uygulama mantığı açıkları için yetkili bir sızma testi gerekir.</p></details>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2026 Surface Scan · Pasif web güvenlik kontrolü · Yalnızca izinli kullanım için</p>
+    <p class="by"><b>Ferdi Birgül</b> tarafından geliştirildi</p>
+  </footer>
+</body>
+</html>

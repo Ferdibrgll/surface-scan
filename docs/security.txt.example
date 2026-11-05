@@ -1,0 +1,8 @@
+# Bu dosyayı kendi bilgilerinle doldurup sitende /.well-known/security.txt olarak yayınla.
+# Biçim: RFC 9116. Expires alanı zorunludur ve en fazla bir yıl sonrasını göstermelidir;
+# bu tarihi yılda bir güncelle.
+
+Contact: mailto:BURAYA-KENDI-EPOSTAN
+Expires: 2027-10-31T00:00:00.000Z
+Preferred-Languages: tr, en
+Canonical: https://BURAYA-ALAN-ADIN/.well-known/security.txt
