@@ -381,8 +381,6 @@ footer .by b { color: var(--text); }
 .note-warn { display: flex; align-items: flex-start; gap: 12px; padding: 14px 18px; border-radius: 12px; font-size: .9rem; color: #f1e3a0; border: 1px solid rgba(250, 204, 21, .4); background: rgba(250, 204, 21, .07); }
 .note-warn .ico { color: var(--low); margin-top: 2px; }
 
-.logo .beam { animation: beam 2.8s ease-in-out infinite alternate; filter: drop-shadow(0 0 3px #22d3ee); }
-@keyframes beam { from { transform: translateY(-3.4px); } to { transform: translateY(3.4px); } }
 
 @media (max-width: 960px) {
   .charts, .found-grid { grid-template-columns: minmax(0, 1fr); }
@@ -419,3 +417,7 @@ footer .by b { color: var(--text); }
   .score-of, .donut-center span { color: #555; }
   .chip, .badge { color: #111; }
 }
+
+/* Logo: prizmadan çıkan ışınlar nefes alır */
+.logo .fan { animation: fanpulse 2.8s ease-in-out infinite alternate; }
+@keyframes fanpulse { from { opacity: .55; } to { opacity: 1; } }

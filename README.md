@@ -1,210 +1,155 @@
 <div align="center">
 
-# 🛡️ SurfaceScan
+<img src="docs/banner.png" alt="AfemSpectra" width="100%" />
 
-### Web sitenizin güvenlik görünürlüğü, tek bir raporda.
+**Alan adını gir, dışarıdan görünen güvenlik yüzeyini saniyeler içinde gör.**
 
-**Cloudflare Workers üzerinde çalışan, pasif web güvenliği analiz aracı.**  
-Alan adınızın herkese açık güvenlik yapılandırmasını inceleyin, bulguları önceliklendirin ve uygulanabilir iyileştirme önerileri alın.
-
-[![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-F38020?logo=cloudflare&logoColor=white)](https://workers.cloudflare.com/)
-![License: MIT](https://img.shields.io/badge/License-MIT-22c55e)
-![Analysis](https://img.shields.io/badge/Analiz-Pasif-00bcd4)
-![Language](https://img.shields.io/badge/Dil-T%C3%BCrk%C3%A7e-3b82f6)
-
-**Geliştirici: [Ferdi Birgül](https://ferdibirgul.com/)**
+![Lisans: MIT](https://img.shields.io/badge/lisans-MIT-3b82f6)
+![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-f38020)
+![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6)
+![Tarama türü](https://img.shields.io/badge/tarama-pasif-22c55e)
 
 </div>
 
----
+AfemSpectra, Cloudflare Workers üzerinde çalışan, tamamen **pasif** bir web güvenlik kontrol aracıdır. Bir sitenin dışarıdan görünen "spektrumunu" tek raporda toplar: güvenlik başlıkları, cookie bayrakları, TLS, `security.txt`/`robots.txt`, DNS (SPF, DMARC, CAA), alt alan adları ve teknoloji izleri. Sonuç 0-100 arası bir skor ve görsel bir raporla sunulur.
 
-## ✨ Proje hakkında
+> **Uyarı:** Yalnızca sahibi olduğunuz veya yazılı izin aldığınız alan adlarını tarayın.
 
-**SurfaceScan**, web sitelerinin dışarıdan görülebilen güvenlik yapılandırmalarını **aktif saldırı gerçekleştirmeden** değerlendirmek için geliştirdiğim bir projedir. Amaç; teknik ekiplerin, geliştiricilerin ve site sahiplerinin güvenlik başlıkları, DNS kayıtları, HTTPS erişimi ve diğer temel göstergeleri tek bir arayüzden inceleyebilmesidir.
+<div align="center">
+<img src="docs/screenshots/01-ana-sayfa.png" alt="AfemSpectra ana sayfa" width="90%" />
+</div>
 
-Bir alan adı girildiğinde araç, erişebildiği herkese açık verileri kontrol eder ve **0–100 arası bir değerlendirme skoru**, bulgular ve iyileştirme önerileri oluşturur. Bu skor yalnızca aracın kontrol ettiği maddelere dayanır; bir sitenin bütünüyle güvenli olduğunu kanıtlamaz.
+## Neler yapar
 
-> [!IMPORTANT]
-> **Yetkili kullanım:** Yalnızca sahibi olduğunuz veya tarama izni aldığınız alan adlarını kontrol edin. SurfaceScan, kapsamlı bir sızma testinin yerine geçmez.
+- **Güvenlik başlıkları:** HSTS, CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy ve cookie bayrakları
+- **TLS ve HTTPS:** geçerli sertifika ve HTTP → HTTPS yönlendirmesi
+- **DNS ve e-posta:** SPF, DMARC, CAA kayıtları
+- **Alt alan adları:** sertifika şeffaflık kayıtlarından (crt.sh)
+- **Standart dosyalar:** `security.txt`, `robots.txt`
+- **Teknoloji izleri:** sunucu, CDN, framework ve sürüm sızıntıları
 
-## 🖥️ Arayüzden görüntüler
+### Saldırı yüzeyi haritası
 
-### Ana sayfa ve örnek güvenlik raporu
+Alan adının etrafındaki altı nokta etkileşimli: her birinde ne kontrol edildiği ve saldırganın neden baktığı anlatılır.
 
-![SurfaceScan ana sayfa ve örnek rapor tasarımı](assets/readme/hero.png)
+<div align="center">
+<img src="docs/screenshots/02-saldiri-yuzeyi.png" alt="Saldırı yüzeyi haritası" width="90%" />
+</div>
 
-### Saldırı yüzeyi görünümü
+### Üç adımda rapor
 
-![SurfaceScan saldırı yüzeyi ve DNS e-posta kontrolleri](assets/readme/attack-surface.png)
+<div align="center">
+<img src="docs/screenshots/03-uc-adim.png" alt="Üç adımda rapor" width="90%" />
+</div>
 
-> Görseller, projenin kullanıcı arayüzünü ve **temsili** rapor verilerini göstermektedir. Görsellerde yer alan puan ve bulgular gerçek bir alan adına ait doğrulanmış sonuçlar değildir.
+## Görsel rapor
 
-## 🔍 Neleri kontrol eder?
+Rapor; skor halkası, kategori bazlı radar grafik, önem dağılımı, güvenlik başlıkları haritası, bulunan alt alan adları ve teknolojileri gösterir. JSON indirme ve PDF / yazdır çıktısı vardır.
 
-| Kategori | Kontroller |
-| :-- | :-- |
-| **HTTP güvenlik başlıkları** | HSTS, CSP, X-Frame-Options ve diğer başlıklar |
-| **TLS / HTTPS** | HTTPS erişimi ve gözlemlenebilen bağlantı bilgileri |
-| **Cookie güvenliği** | `Secure`, `HttpOnly`, `SameSite` bayrakları |
-| **DNS ve e-posta** | SPF, DMARC, CAA kayıtları |
-| **Güvenlik dosyaları** | `/.well-known/security.txt`, `robots.txt` |
-| **Alt alan adları** | crt.sh sertifika şeffaflığı kayıtlarına dayalı keşif |
-| **Teknoloji izleri** | Yanıtlarda görülebilen sunucu / uygulama teknolojisi ipuçları |
+<div align="center">
+<img src="docs/screenshots/04-rapor.png" alt="Rapor ekranı" width="90%" />
+</div>
 
-*Bazı kontroller, hedef sitenin erişilebilirliğine ve harici veri servislerinin yanıtlarına bağlı olarak eksik kalabilir. Bu durumlar raporun `notes` alanında belirtilir.*
+Eksik başlıklar için kopyalanabilir hazır `_headers` kodu ve önem sırasına göre dizilmiş bulgular da raporun içinde:
 
-## 📊 Rapor özellikleri
+<div align="center">
+<img src="docs/screenshots/05-duzeltme-ve-bulgular.png" alt="Hazır düzeltme kodu ve bulgular" width="90%" />
+</div>
 
-- **0–100 güvenlik skoru** ve animasyonlu skor göstergesi
-- Kategori bazlı **radar grafik**
-- Bulgu önem düzeyleri için **halka grafik**
-- Güvenlik başlıkları için **durum haritası**
-- Tespit edilebilen **alt alan adları ve teknoloji izleri**
-- Eksik başlıklar için kopyalanabilir örnek **`_headers` yapılandırması**
-- **JSON dışa aktarma**, **PDF / yazdırma** seçeneği
-- Yanıt alınamayan kontroller için **belirsizlik / eksik veri notları**
+Mobilde de aynı rapor, tek sütunda:
 
-## ⚙️ Nasıl çalışır?
+<div align="center">
+<img src="docs/screenshots/06-mobil-rapor.png" alt="Mobil rapor görünümü" width="280" />
+</div>
 
-```text
-Kullanıcı alan adını girer
-          │
-          ▼
-Alan adı doğrulaması + DNS/IP güvenlik kontrolleri
-          │
-          ▼
-Herkese açık HTTP / HTTPS / DNS / crt.sh verilerinin okunması
-          │
-          ▼
-Bulguların kategorilere ayrılması ve skor hesaplanması
-          │
-          ▼
-Görsel rapor + iyileştirme önerileri + JSON/PDF çıktısı
-```
+> Görseller örnek verilerle (`ornek.com`) hazırlanmıştır.
 
-**SurfaceScan; port taraması, brute force, kimlik doğrulama denemesi veya zafiyet sömürüsü yapmaz.** Pasif yaklaşım, her koşulda sıfır ağ trafiği anlamına gelmez: araç, herkese açık uç noktalara normal HTTP/DNS sorguları gönderebilir.
+## Yapılmayanlar (bilinçli)
 
-## 🧰 Kullanılan teknolojiler
+Port tarama, brute force, zafiyet sömürme ve benzeri aktif testler yoktur. Araç yalnızca herkese açık bilgileri okur. Pasif tarama tam bir güvenlik testinin (sızma testi) yerini tutmaz.
 
-| Bileşen | Teknoloji / yaklaşım |
-| :-- | :-- |
-| Çalışma ortamı | Cloudflare Workers |
-| Geliştirme / dağıtım | Node.js, npm, Wrangler |
-| Web arayüzü | Koyu tema, görsel güvenlik raporları |
-| DNS sorguları | DNS-over-HTTPS (DoH) |
-| Alt alan keşfi | crt.sh |
-| API çıktısı | JSON |
-
-## 🚀 Yerel kurulum
-
-**Gereksinimler:** Node.js ve npm. Cloudflare'a dağıtım için bir Cloudflare hesabı ve Wrangler oturumu gerekir.
+## Kurulum
 
 ```bash
-# Depoyu klonlayın (kendi depo URL'nizle değiştirin)
-git clone <REPO_URL>
-cd <REPO_KLASORU>
-
-# Bağımlılıkları kurun
 npm install
-
-# Yerel geliştirme sunucusunu başlatın
-npm run dev
+npm run dev      # yerel geliştirme (http://localhost:8787)
+npm run deploy   # Cloudflare'e yayınla (wrangler login gerekir)
 ```
 
-Yerel adres: **http://localhost:8787**
+## Proje yapısı
 
-### Cloudflare Workers'a dağıtım
-
-```bash
-npx wrangler login
-npm run deploy
+```
+afemspectra/
+├─ src/
+│  ├─ index.ts      # Worker: /api/scan, /api/health, rate limit, güvenlik başlıkları
+│  ├─ checks.ts     # pasif kontroller (başlıklar, dosyalar, DNS, alt alanlar)
+│  ├─ guard.ts      # alan adı doğrulama, SSRF koruması, DNS-over-HTTPS
+│  └─ types.ts
+├─ public/          # arayüz (index.html, style.css, app.js, favicon.svg)
+├─ scripts/         # ratelimit-test.mjs
+├─ docs/            # banner, ekran görüntüleri, security.txt örneği
+└─ wrangler.toml
 ```
 
-> Dağıtımdan önce Worker yapılandırmasını ve `wrangler.toml` dosyasındaki bağlayıcıları kontrol edin.
+## Uç noktalar
 
-## 🔌 API uç noktaları
-
-| Metot | Uç nokta | Açıklama |
-| :-- | :-- | :-- |
-| `GET` | `/api/scan?domain=ornek.com` | Belirtilen alan adını analiz eder |
-| `GET` | `/api/health` | Servis durumu ve rate limit bilgisini döndürür |
-
-Örnek istek:
-
-```bash
-curl "http://localhost:8787/api/scan?domain=ornek.com"
+```
+GET /api/scan?domain=ornek.com   # tarama
+GET /api/health                  # durum ve rate limit türü
 ```
 
-Örnek yanıt **şeması** (değerler temsili):
+Tarama yanıtı: `{ domain, score, summary, findings[], subdomains[], technologies[], notes[] }`
 
-```json
-{
-  "domain": "ornek.com",
-  "score": 82,
-  "summary": {},
-  "findings": [],
-  "subdomains": [],
-  "technologies": [],
-  "notes": []
-}
-```
+`notes` alanı, sonuçların eksik olabileceği durumları (site botları engelliyor, crt.sh yanıt vermedi vb.) açıklar.
 
-Gerçek alanların içerikleri ve bulgular, analiz edilen domaine göre değişir.
+## Skor nasıl hesaplanır
 
-## 🔐 Güvenlik ve kullanım sınırları
+100 puandan başlanır. Yüksek riskli her bulgu 25, orta riskli 10, düşük riskli 4 puan düşürür. Bilgi ve geçen kontroller puanı etkilemez.
 
-- Alan adı doğrulaması yapılır; IP adresleri ve iç ağ uzantıları reddedilir.
-- SSRF riskine karşı alan adları DoH ile çözülür; özel ve loopback adreslere yönlendirme engellenmeye çalışılır.
-- İsteklerde zaman aşımı ve yanıt gövdelerinde boyut sınırı uygulanır.
-- Uzak içerik arayüze `textContent` ile yerleştirilerek HTML olarak yorumlanması önlenir.
-- Statik sayfalarda güvenlik başlıkları kullanılır.
-- Rate limiting uygulanır; **yerel yedek limit tek başına dağıtık ortamda yeterli koruma sağlamaz**.
-- Hedef site erişimi engelliyorsa, yanıltıcı kesin güvenlik bulguları oluşturulmaması amaçlanır.
+## Güvenlik önlemleri
 
-### Yayından önce rate limit testi
+- Alan adı doğrulama (regex, IP ve iç ağ uzantıları reddedilir)
+- SSRF koruması: alan adı DoH ile çözülür, özel/loopback IP'ye işaret ediyorsa reddedilir
+- IP başına rate limit (Cloudflare bağlantısı yoksa yerel yedek)
+- Yanıt gövdeleri boyut sınırıyla okunur (CPU ve bellek koruması)
+- Site taramayı engelliyorsa yanlış "eksik" bulgusu üretilmez
+- Arayüzde tüm uzak içerik `textContent` ile yazılır (XSS yok)
+- Statik sayfalarda CSP, HSTS, X-Frame-Options vb. başlıklar
+- Her dış istek için zaman aşımı
 
-```bash
-node scripts/ratelimit-test.mjs https://SENIN-ADRESIN.workers.dev
-```
+## Yayına almadan önce kontrol listesi
 
-Projede yapılandırılmış 5 istek sınırı senaryosunda ilk isteklerin `200`, sınır aşıldığında `429` dönmesi beklenir. **Gerçek sonuçlar yapılandırma ve test koşullarına bağlıdır.**
+1. **Rate limit çalışıyor mu?** `wrangler.toml` içindeki limit `unsafe` bir tanımdır. Yayından sonra:
+   ```bash
+   node scripts/ratelimit-test.mjs https://SENIN-ADRESIN.workers.dev
+   ```
+   İlk 5 istek `200`, sonrakiler `429` dönmeli. `/api/health` yanıtında `rateLimiter` alanı `cloudflare-binding` ise Cloudflare limiti aktiftir, `yerel-yedek` ise yalnızca Worker örneği başına çalışan yedek limit kullanılıyordur. İkinci durumda Cloudflare panelinden bir rate limiting kuralı ekleyin.
+2. **Ücretsiz plan CPU sınırı.** Workers ücretsiz planında istek başına CPU süresi kısıtlıdır. Yanıt okuma boyutları sınırlandırıldı, yine de yayından sonra panelde hata oranına bakın.
+3. **İsim ve marka.** "Spectra" yaygın bir kelimedir. Büyütmeyi düşünüyorsanız alan adı, GitHub ve sosyal medya adını kontrol edin.
+4. **Kendi sitenizi tarayın.** Yayınladığınız adresi aracın kendisiyle tarayıp başlıkların geldiğini doğrulayın.
+5. **`security.txt` ekleyin.** `docs/security.txt.example` dosyasını kendi bilgilerinizle doldurup sitenizde `/.well-known/security.txt` olarak yayınlayın.
 
-`GET /api/health` yanıtındaki `rateLimiter` alanı:
+## Yol haritası
 
-- `cloudflare-binding`: Cloudflare rate limiter bağlantısı aktif.
-- `yerel-yedek`: Yalnızca Worker örneği içinde çalışan yedek limit; ayrıca Cloudflare tarafında kural tanımlanmalıdır.
+- Cookie/başlık kontrollerini ek sayfalarda da çalıştırma
+- TLS protokol/şifre seti bilgisi (harici API ile)
+- React/TypeScript/Tailwind arayüzü
 
-Ayrıca `docs/security.txt.example` şablonunu kendi iletişim bilgilerinizle düzenleyip `/.well-known/security.txt` yolunda yayınlayın.
-
-## 🗺️ Yol haritası
-
-- [ ] Başlık ve cookie kontrollerini belirli ek sayfalarda gerçekleştirme
-- [ ] Harici veri kaynağı ile gelişmiş TLS protokol / şifre takımı görünürlüğü
-- [ ] React, TypeScript ve Tailwind tabanlı arayüz yenilemesi
-
-*Yol haritasındaki özellikler plan aşamasındadır; mevcut işlevler olarak değerlendirilmemelidir.*
-
-## 👨‍💻 Geliştirici hakkında
+## Geliştirici
 
 **Ferdi Birgül**  
-*IT Support & Network Security Specialist*
+*IT & Network Support Specialist | Offensive Security*
 
-Ağ altyapısı, sistem yönetimi, teknik destek ve siber güvenlik üzerine çalışan bir bilişim profesyoneliyim. **SurfaceScan** projesini, web güvenliğiyle ilgili temel kontrolleri herkesin anlayabileceği görsel bir raporda birleştirmek ve güvenliğe yönelik farkındalığı artırmak amacıyla geliştirdim.
+Ağ altyapısı, sistem yönetimi, teknik destek ve siber güvenlik üzerine çalışan bir bilişim profesyoneliyim. **AfemSpectra** projesini, web güvenliğiyle ilgili temel kontrolleri herkesin anlayabileceği görsel bir raporda birleştirmek ve güvenliğe yönelik farkındalığı artırmak amacıyla geliştirdim.
 
 Bu proje, güvenlik bilgilerini yalnızca toplamakla kalmayıp **anlaşılır, izlenebilir ve geliştirilebilir** hale getirme yaklaşımımın bir parçasıdır.
 
-🌐 **Web sitesi / Portföy:** [ferdibirgul.com](https://ferdibirgul.com/)
+- 🌐 **Web sitesi / Portföy:** [ferdibirgul.com](https://ferdibirgul.com/)
+- GitHub: [@Ferdibrgll](https://github.com/Ferdibrgll)
+- LinkedIn: [linkedin.com/in/ferdibirgül](https://www.linkedin.com/in/ferdibirg%C3%BCl)
 
-## 📄 Lisans
+Geri bildirim ve katkılar için issue açabilirsiniz.
 
-Bu proje **MIT Lisansı** altında sunulur. Ayrıntılar için [`LICENSE`](LICENSE) dosyasına bakın.
+## Lisans
 
----
-
-<div align="center">
-
-**SurfaceScan · Güvenliği görünür kıl.**
-
-Geliştiren: **Ferdi Birgül** © 2026
-
-</div>
+MIT, bkz. [`LICENSE`](LICENSE).

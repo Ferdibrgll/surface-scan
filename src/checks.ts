@@ -1,7 +1,7 @@
 import { doh } from "./guard";
 import type { Finding } from "./types";
 
-const UA = "surfacescan-passive/0.1 (+passive security check; read-only)";
+const UA = "afemspectra-passive/0.1 (+passive security check; read-only)";
 
 async function get(url: string, timeoutMs = 6000): Promise<Response | null> {
   try {
